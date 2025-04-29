@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Visualizations</title>
+    <style>
+        .center {
+            display: block;
+            margin: 0 auto;
+            max-width: 90%;
+            height: auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        label {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 320px;
+            height: 50px;
+            font-size: 18px;
+            padding: 10px;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            width: 150px;
+            height: 50px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Layout for the plots */
+        .plot-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .plot-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px; /* Adds space between rows */
+        }
+
+        .plot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .plot img {
+            width: 400px; 
+            height: auto;
+            margin-bottom: 10px; 
+        }
+
+        .plot a {
+            text-decoration: none;
+            border: 1px solid;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-align: center;
+            color:black;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4)
+        }
+        .line-plot-img {
+            border: 2px solid rgb(163, 234, 229) ;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .pie-plot-img {
+            border: 2px solid rgb(159, 238, 230) ;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+
+        }
+        
+        .bar-plot-img {
+            border: 2px solid rgb(163, 234, 229);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+
+        }
+        
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center">Log File Graphs</h1>
+
+    <div class="plot-container">
+        {% if graph_url == 'filtered' %}
+            <div class="plot-row">
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='filtered_lineplot.png') }}" alt="Line Plot" class="line-plot-img">
+                    <a href="{{ url_for('static', filename='filtered_lineplot.png') }}" download>Download Line Plot</a>
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='filtered_piechart.png') }}" alt="Pie Chart" class="pie-plot-img">
+                    <a href="{{ url_for('static', filename='filtered_piechart.png') }}" download>Download Pie Chart</a>
+                </div>
+            </div>
+            <div class="plot-row">
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='filtered_bargraph.png') }}" alt="Bar Graph" class="bar-plot-img">
+                    <a href="{{ url_for('static', filename='filtered_bargraph.png') }}" download>Download Bar Graph</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="plot-row">
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='lineplot.png') }}" alt="Line Plot" class="line-plot-img">
+                    <a href="{{ url_for('static', filename='lineplot.png') }}" download>Download Line Plot</a>
+                </div>
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='piechart.png') }}" alt="Pie Chart" class="pie-plot-img">
+                    <a href="{{ url_for('static', filename='piechart.png') }}" download>Download Pie Chart</a>
+                </div>
+            </div>
+            <div class="plot-row">
+                <div class="plot">
+                    <img src="{{ url_for('static', filename='bargraph.png') }}" alt="Bar Graph" class="bar-plot-img">
+                    <a href="{{ url_for('static', filename='bargraph.png') }}" download>Download Bar Graph</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div style="text-align:center">
+        <form action="/graphs" method="POST">
+            <label for="fromtime">Time1</label>
+            <input type="text" name="fromtime" id="fromtime" placeholder="Sun Dec 04 04:47:44 2005" required>
+            <label for="totime">Time2</label>
+            <input type="text" name="totime" id="totime" placeholder="Mon Dec 05 19:15:57 2005" required>
+
+            <button type="submit" style="border-radius:10px; background-color:cadetblue;width:100px;height:50px">Filter Logs</button>
+        </form><br><br>
+    </div>
+    <h2 style="text-align:center">Create Your Own Plot</h2>
+
+    <form action="/run" method="POST">
+    <textarea name="code" rows="20" cols="100" >{{c}}</textarea>
+    <input type="submit" value="Run" style="background-color:rgb(72, 193, 193); border-radius:10px;width:60px; height:40px; font-size:15px;border:1px solid white">
+    <h3>Your Generated Plot:</h3>
+    {% if error %}
+        <p style="color: red;text-align:center">{{ error }}</p>
+    {% endif %}
+<img src="{{ url_for('static', filename='custom_plot.png') }}" id="img"
+     alt="Custom Plot" 
+     width="600">
+</form>
+</body>
+<script>
+    Plot_url="{{plot_url}}"
+    if(Plot_url){
+    img=document.getElementById("img");
+    img.src=Plot_url}
+    else{
+        img.style.display="none"
+    }
+</script>
+</html>

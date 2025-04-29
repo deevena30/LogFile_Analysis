@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV File</title>
+    <style>
+        .btn{
+            float: right;
+            justify-content: space-between;
+            text-decoration:none;
+            font-size:18px; 
+            border:1px solid white; 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            border-radius:10px;
+            width:120px;
+            text-align: center;
+            text-shadow: #ccc;
+            color:black;
+           
+        }
+        table {
+            width: 90%;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        #download-btn{
+            color:black;
+            border-radius:10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+  
+        select {
+            padding: 6px 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #aaa;
+            margin-top: 5px;
+            }
+        
+        button {
+            margin-top: 12px;
+            padding: 8px 16px;
+            font-size: 1rem;
+            color: white;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            }        
+    </style>
+</head>
+<body >  
+    <h2 style="text-align:center;">Log File (CSV) Display</h2>
+    <form method="POST" action="/hurray"style="text-align:center">
+        <label for="level">Select Level:</label><br>
+        <select id="level" name="level">
+            <option value="all" {% if selected_level == 'all' %}selected{% endif %}>All</option>
+            <option value="error" {% if selected_level == 'error' %}selected{% endif %}>error</option>
+            <option value="notice" {% if selected_level == 'notice' %}selected{% endif %}>notice</option>
+        </select><br>
+        <button type="submit" style="background-color:rgb(113, 121, 118); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); border-radius:10px;border:1px solid rgb(148, 159, 155)">Filter</button>
+      </form>
+    <a id="download-btn" href="/latestcsv" download style="text-decoration:none">Download CSV File</a>
+    <a class="btn" href="{{ url_for('graphs') }}" >Visualizations</a>
+    <table id="csv-table">
+    <!-- done by js -->
+    </table>
+
+    <script>    
+        //display CSV file in table
+        fetch('/latestcsv')   //Sends an HTTP GET request to /latestcsv on the serve (Requests that CSV file from Flask.)
+            .then(response => response.text()) //converts the data into a full text(big string)eg;"deevena\nhello" if file is of two rows containing deevena and hello
+            .then(data => {
+                const table = document.getElementById('csv-table');// get the table element
+                const rows = data.trim().split('\n'); //list of rows eg;["deevena","hello"] (in other words, it splits into lines)
+
+                rows.forEach((row, rowIndex) => {
+                    const cols = row.split(',');
+                    const tr = document.createElement('tr'); //creates table row
+                    cols.forEach(col => {
+                        const cell = document.createElement(rowIndex === 0 ? 'th' : 'td'); //table header
+                        cell.textContent = col.trim();
+                        tr.appendChild(cell);
+                    });
+                    table.appendChild(tr);
+                });
+            })
+            .catch(err => {
+                console.error('Error fetching CSV:', err);// if the file doesn’t exist or the server fails show and error
+                alert('Failed to load CSV file.');
+            });
+    </script>
+   
+</body>
+</html>

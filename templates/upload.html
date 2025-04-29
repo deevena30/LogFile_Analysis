@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log File Analyzer</title>
+</head>
+<body style="font-size: 18px; zoom: 1.3;">
+    <h2 style="text-align:center">Upload Log File</h2>
+    <form action="/hurray" method="POST" enctype="multipart/form-data" style="text-align:center">
+        <div style="margin: 0 auto; text-align: center;">
+            <input type="file" name="log" required style="
+                display: inline-block;
+                margin: 0 auto;
+                padding: 10px;
+                border: 2px solid;
+                border-radius: 10px;
+                background-color: #f8f9fa;
+            ">
+        </div>
+        <br>
+        <button type="submit" style=" border-radius:10px; height:30px;background-color: #63e6e2">Upload</button>
+    </form>
+    <p>{{st}}</p>
+    {% if error %}
+    <p style="color: red;text-align:center;font-size:14px">{{ error }}</p>
+    {% endif %}
+    <style>
+        button[type="submit"]:hover {
+            background-color: #2a75d3;
+        }
+        input[type="file"]:hover {
+            border-color: #2a75d3;
+        }
+    </style>
+
+    
+</body>
+</html>
