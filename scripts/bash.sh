@@ -37,13 +37,21 @@ awk '
 BEGIN { lineId=1 }
 
 {
-    match($0, /^\[([^]]+)\] \[([^]]+)\] (.*)/, arr)  # To Extract time, level, and content using regex
+    # Extract time
+    first_lb = index($0, "[")
+    first_rb = index($0, "]")
+    time = substr($0, first_lb + 1, first_rb - first_lb - 1)
 
-    time = arr[1]
-    level = arr[2]
-    content = arr[3]
-    # To Remove carriage returns and newlines from content
-    gsub(/\r/, "", content) 
+    # Extract level
+    second_lb = index(substr($0, first_rb + 1), "[") + first_rb
+    second_rb = index(substr($0, second_lb + 1), "]") + second_lb
+    level = substr($0, second_lb + 1, second_rb - second_lb - 1)
+
+    # Extract content
+    content = substr($0, second_rb + 2)
+
+    # Clean content
+    gsub(/\r/, "", content)
     gsub(/\n/, "", content)
     eventId = ""
     template = ""
