@@ -32,7 +32,7 @@ fi
 
 # CSV Header
 echo "LineId,Time,Level,Content,EventId,EventTemplate" > "$output_file"
-
+lineId = 0
 awk '
 BEGIN { lineId=1 }
 
@@ -81,5 +81,6 @@ BEGIN { lineId=1 }
     }
 
    printf("%d,%s,%s,%s,%s,%s\n", lineId,time,level,content,eventId,template)
+   lineId++
 }
 ' "$input_file" >> "$output_file"
