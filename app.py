@@ -40,7 +40,8 @@ def upload():
         count = 0   #checking first three lines of apache file...generally apache has [..........] so I did validating the file using that 
         for line in lines[:3]:
             if '[' in line and ']' in line:
-                 count += 1
+                if not '[error]' or '[notice]' in line:
+                    count += 1
         if count < 3:
             return render_template('upload.html', error='The uploaded file is not an Apache log file.')
         
@@ -346,11 +347,17 @@ def run():
     c = ""  #c stores the submitted code so it can be shown again in the text box.
     if request.method == 'POST':
         code = request.form['code']
-        
-        if not ('import numpy' in code or 'from numpy' in code or #only for generating plots and some numpy code stuff, if not page returns a error message
-            'import matplotlib' in code or 'from matplotlib' in code):
-            return render_template('graphs.html', error='Only numpy and matplotlib code is allowed.')
-        
+         
+        if ('import' in code or 'from' in code):
+            allowed_imports = ['import numpy', 'from numpy',
+                               'import matplotlib', 'from matplotlib']
+            lines = code.split('\n')
+            for line in lines:
+                line = line.strip()
+                if line.startswith('import') or line.startswith('from'):
+                    if not any(allowed in line for allowed in allowed_imports):
+                        return render_template('graphs.html', error='Only matplotlib and numpy imports are allowed.', c=c)
+
         exec(code)
         #saving the plot
         c = code
