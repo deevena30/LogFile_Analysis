@@ -5,11 +5,14 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
+import re
 
 def no_show():
     pass
 plt.show=no_show
 app = Flask(__name__)
+
+pattern = r'[A-Z][a-z]{2} [A-Z][a-z]{2} \d{2} \d{2}:\d{2}:\d{2} \d{4}'
 
 csvfile = "structuredlog.csv" #output of bash.sh
 script_sh = "scripts/bash.sh"
@@ -40,6 +43,8 @@ def upload():
         count = 0   #checking first three lines of apache file...generally apache has [..........] so I did validating the file using that 
         for line in lines[:3]:
             if '[' in line and ']' in line:
+                if not re.search(pattern, line):
+                    return render_template('upload.html', error='The uploaded file is not an Apache log file.')
                 if not '[error]' in line or not '[notice]' in line:
                     count += 1
         if count < 3:
