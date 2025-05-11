@@ -27,7 +27,7 @@ def upload():
     
     if 'log' in request.files:
         f = request.files['log']
-        save_path = 'uploadedlogfiles/' + f.filename
+        save_path = os.path.join('uploadedlogfiles', f.filename)
         f.save(save_path)
         try:   #file validate (apache or not)
             with open(save_path, 'r') as file1:
