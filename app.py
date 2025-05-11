@@ -40,7 +40,7 @@ def upload():
         count = 0   #checking first three lines of apache file...generally apache has [..........] so I did validating the file using that 
         for line in lines[:3]:
             if '[' in line and ']' in line:
-                if not '[error]' or '[notice]' in line:
+                if not '[error]' in line or not '[notice]' in line:
                     count += 1
         if count < 3:
             return render_template('upload.html', error='The uploaded file is not an Apache log file.')
