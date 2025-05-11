@@ -72,9 +72,6 @@ BEGIN { lineId=1 }
         template = " "  
     }
 
-    if (time != "" && level != "" && content != "") {
-    printf("\"%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n", lineId, time, level, content, eventId, template)
-    lineId++
-}
+   printf("%d,%s,%s,%s,%s,%s\n", lineId,time,level,content,eventId,template)
 }
 ' "$input_file" >> "$output_file"
